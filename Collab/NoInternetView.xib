@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="NoInternetView" customModule="Collab" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="575"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="backGround" translatesAutoresizingMaskIntoConstraints="NO" id="GZq-fb-VQu">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="575"/>
+                </imageView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MEu-85-Bt0">
+                    <rect key="frame" x="0.0" y="140" width="320" height="275"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="MEu-85-Bt0" secondAttribute="height" multiplier="64:55" id="1p1-ZW-ZvG"/>
+                    </constraints>
+                </view>
+                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFill" image="cloud" translatesAutoresizingMaskIntoConstraints="NO" id="PYH-7X-0Zy">
+                    <rect key="frame" x="98.5" y="140" width="123" height="110"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="110" id="07g-T2-lR2"/>
+                        <constraint firstAttribute="width" constant="123" id="EX1-tY-Ona"/>
+                    </constraints>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Whoops!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zxc-XD-47B">
+                    <rect key="frame" x="98.5" y="235" width="123" height="47"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="123" id="Gmw-pg-O7K"/>
+                        <constraint firstAttribute="height" constant="47" id="V5S-bD-RtW"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="24"/>
+                    <color key="textColor" red="0.97647058819999999" green="0.97647058819999999" blue="0.97647058819999999" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Internet connection found. Check your connection or try again." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OSt-g8-9qS">
+                    <rect key="frame" x="20" y="277" width="280" height="60"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="280" id="6FI-iD-p4W"/>
+                        <constraint firstAttribute="height" constant="60" id="hsq-kw-D70"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uhP-8e-oYP">
+                    <rect key="frame" x="37" y="365" width="246" height="47"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="uhP-8e-oYP" secondAttribute="height" multiplier="246:47" id="y6u-LU-JXT"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                    <state key="normal" title="Retry" backgroundImage="text_field">
+                        <color key="titleColor" red="0.14117647058823529" green="0.14117647058823529" blue="0.14117647058823529" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
+                    <connections>
+                        <action selector="retryBtnAction:" destination="iN0-l3-epB" eventType="touchUpInside" id="D6k-s8-eqT"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="uhP-8e-oYP" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="37" id="1lb-Pd-Tga"/>
+                <constraint firstAttribute="trailing" secondItem="GZq-fb-VQu" secondAttribute="trailing" id="6WA-xo-mQ6"/>
+                <constraint firstAttribute="bottom" secondItem="GZq-fb-VQu" secondAttribute="bottom" id="91f-uZ-Drn"/>
+                <constraint firstAttribute="trailing" secondItem="uhP-8e-oYP" secondAttribute="trailing" constant="37" id="DmF-nX-KLs"/>
+                <constraint firstItem="PYH-7X-0Zy" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="FF3-mD-Gai"/>
+                <constraint firstItem="PYH-7X-0Zy" firstAttribute="top" secondItem="MEu-85-Bt0" secondAttribute="top" id="G2N-cu-rxE"/>
+                <constraint firstItem="OSt-g8-9qS" firstAttribute="top" secondItem="zxc-XD-47B" secondAttribute="bottom" constant="-5" id="Im2-7l-rcA"/>
+                <constraint firstItem="OSt-g8-9qS" firstAttribute="centerX" secondItem="zxc-XD-47B" secondAttribute="centerX" id="JLH-6r-aig"/>
+                <constraint firstItem="GZq-fb-VQu" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="JrD-6s-uAo"/>
+                <constraint firstItem="MEu-85-Bt0" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Rkp-vf-uft"/>
+                <constraint firstItem="MEu-85-Bt0" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" constant="-10" id="b7B-Wa-s7a"/>
+                <constraint firstItem="GZq-fb-VQu" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="jFR-sX-Ae5"/>
+                <constraint firstItem="zxc-XD-47B" firstAttribute="top" secondItem="PYH-7X-0Zy" secondAttribute="bottom" constant="-15" id="mvv-93-WHQ"/>
+                <constraint firstItem="zxc-XD-47B" firstAttribute="centerX" secondItem="PYH-7X-0Zy" secondAttribute="centerX" id="oIS-zq-SZW"/>
+                <constraint firstItem="uhP-8e-oYP" firstAttribute="top" secondItem="OSt-g8-9qS" secondAttribute="bottom" constant="28" id="u1S-kA-RJo"/>
+                <constraint firstItem="MEu-85-Bt0" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="uch-n1-FMN"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="289" y="-422.5"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="backGround" width="375" height="667"/>
+        <image name="cloud" width="150" height="150"/>
+        <image name="text_field" width="319" height="61"/>
+    </resources>
+</document>
