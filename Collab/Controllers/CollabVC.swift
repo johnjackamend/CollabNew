@@ -20,7 +20,7 @@ class CollabVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
 
 
     var arrayMenu = ["Home","Me","My Chat","Collab with","Settings","Invite Friends"]
-    var arrayIconUnselected = ["Home","Me","My Chat","Collab with","Settings","Invite Friends"]
+    var arrayIconUnselected = ["Home","Me","MyChat","Collab with","Settings","Invite Friends"]
     var arrayIconSelected = ["Home1","Me1","My Chat1","Collab with1","Settings1","Invite Friends1"]
     
     var userData = UserDefaults.SFSDefault(valueForKey: "userInfo") as! Dictionary<String , Any>
@@ -31,15 +31,16 @@ class CollabVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         super.viewDidLoad()
         
         
-        if UserDefaults.standard.bool(forKey: "friends_count"){
+        //if UserDefaults.standard.bool(forKey: "friends_count"){
             arrayMenu = ["Home","Me","My Chat","Collab with","Settings","Invite Friends"]
-            arrayIconUnselected = ["Home","Me","My Chat","Collab with","Settings","Invite Friends"]
+            arrayIconUnselected = ["Home","Me","MyChat","Collab with","Settings","Invite Friends"]
             arrayIconSelected = ["Home1","Me1","My Chat1","Collab with1","Settings1","Invite Friends1"]
+        /*
         }else{
             arrayMenu = ["Home","Me","Collab with","Settings","Invite Friends"]
             arrayIconUnselected = ["Home","Me","Collab with","Settings","Invite Friends"]
             arrayIconSelected = ["Home1","Me1","Collab with1","Settings1","Invite Friends1"]
-        }
+        }*/
         
         self.tblSideMenu.reloadData()
 
@@ -61,15 +62,18 @@ class CollabVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if UserDefaults.standard.bool(forKey: "friends_count"){
+       // if UserDefaults.standard.bool(forKey: "friends_count"){
              arrayMenu = ["Home","Me","My Chat","Collab with","Settings","Invite Friends"]
              arrayIconUnselected = ["Home","Me","My Chat","Collab with","Settings","Invite Friends"]
              arrayIconSelected = ["Home1","Me1","My Chat1","Collab with1","Settings1","Invite Friends1"]
+        
+            /*
+            
         }else{
              arrayMenu = ["Home","Me","Collab with","Settings","Invite Friends"]
              arrayIconUnselected = ["Home","Me","Collab with","Settings","Invite Friends"]
              arrayIconSelected = ["Home1","Me1","Collab with1","Settings1","Invite Friends1"]
-        }
+        }*/
         
         self.tblSideMenu.reloadData()
     }

@@ -107,9 +107,9 @@ class FullProfileVC: UIViewController,NPAudioStreamDelegate,CMPageControlDelegat
                 self.lblUserName.text = userDataDict["full_name"] as? String
                 self.bioStr = (userDataDict["bio"] as? String)!
                 
-                let userSettings = dataDict["user_settings"] as! Dictionary<String, Any>
-                
-                let cataDict = userSettings["music_industry"] as! String
+                let userSettings = dataDict["collab_with"] as! Dictionary<String, Any>
+              
+                let cataDict = userSettings["collab_with"] as! String
             
                 let musicIndustryArray:[String] = cataDict.components(separatedBy: ",")
                 
@@ -166,10 +166,24 @@ class FullProfileVC: UIViewController,NPAudioStreamDelegate,CMPageControlDelegat
     }
 
     func btnPlaySongAction()  {
+        if urlArray.count != 0{
+            let Controller = (self.storyboard?.instantiateViewController(withIdentifier: "PortfolioVC"))! as! PortfolioVC
+            Controller.portfolioURLString = urlArray[0]
+            definesPresentationContext = true
+            Controller.modalPresentationStyle = .overCurrentContext
+            let transition = CATransition()
+            transition.duration = 0.3
+            transition.type = kCATransitionFade
+            transition.subtype = kCATransitionFromRight
+            navigationController?.view?.layer.add(transition, forKey: kCATransition)
+            self.navigationController?.pushViewController(Controller, animated: false)
+        }
+        /*
         audioStream.callMethod(urlArray as! NSMutableArray)
         audioStream.selectIndex(forPlayback: 0)
         audioStream.play()
-        isPlaying = true
+        isPlaying = true*/
+        
     }
 
     func btnPauseSongAction()  {
@@ -179,11 +193,23 @@ class FullProfileVC: UIViewController,NPAudioStreamDelegate,CMPageControlDelegat
 
     @IBAction func goToInstaProfile(_ sender: Any) {
         if let url = URL(string: instaUrlStr ) {
+            /*
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:])
             } else {
                 UIApplication.shared.openURL(url)
             }
+           */
+            let Controller = (self.storyboard?.instantiateViewController(withIdentifier: "PortfolioVC"))! as! PortfolioVC
+            Controller.portfolioURLString = url
+            definesPresentationContext = true
+            Controller.modalPresentationStyle = .overCurrentContext
+            let transition = CATransition()
+            transition.duration = 0.3
+            transition.type = kCATransitionFade
+            transition.subtype = kCATransitionFromRight
+            navigationController?.view?.layer.add(transition, forKey: kCATransition)
+            self.navigationController?.pushViewController(Controller, animated: false)
         }
     }
     @IBAction func bckBtnAction(_ sender: Any) {
@@ -260,7 +286,7 @@ class FullProfileVC: UIViewController,NPAudioStreamDelegate,CMPageControlDelegat
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell : UICollectionViewCell = collectionImages.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        let imageView : UIImageView  = UIImageView.init(frame: .init(x: 0, y: 0, width: (self.view.window?.bounds.size.width)!, height: (self.view.window?.bounds.size.height)! - 64 ))
+        let imageView : UIImageView  = UIImageView.init(frame: .init(x: 0, y: 0, width: (self.view.window?.bounds.size.width)!, height: (self.view.window?.bounds.size.width)! ))
         imageView.backgroundColor = UIColor.lightGray
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
@@ -274,7 +300,7 @@ class FullProfileVC: UIViewController,NPAudioStreamDelegate,CMPageControlDelegat
     
     // Layout: Set cell size
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: IndexPath) -> CGSize{
-        let mElementSize = CGSize(width: CGFloat((self.view.window?.bounds.size.width)!), height: CGFloat((self.view.window?.bounds.size.height)! - 64))
+        let mElementSize = CGSize(width: CGFloat((self.view.window?.bounds.size.width)!), height: CGFloat((self.view.window?.bounds.size.width)!))
         return mElementSize
     }
 

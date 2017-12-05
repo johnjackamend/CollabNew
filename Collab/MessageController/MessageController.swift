@@ -18,6 +18,9 @@ class MessageController:UIViewController, InputbarDelegate, MessageGatewayDelega
     @IBOutlet var lblUserName: UILabel!
     @IBOutlet weak var tableView:UITableView!
     @IBOutlet weak var inputbar:Inputbar!
+    
+    @IBOutlet weak var btnFav:UIButton!
+    
     let deviceToken:String = ""
     var frndUnreadMsg = String()
     var image = UIImage()
@@ -79,6 +82,13 @@ class MessageController:UIViewController, InputbarDelegate, MessageGatewayDelega
             self.tableViewScrollToBottomAnimated(animated: false)
 
         }
+        
+        if self.chat.favourite == 1 {
+            self.btnFav.isSelected = true
+        }else{
+            self.btnFav.isSelected = false
+        }
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -222,12 +232,19 @@ class MessageController:UIViewController, InputbarDelegate, MessageGatewayDelega
     // MARK: Firebase Notification Method
     
     func fireOneSignalNotification(textMsg:String)  {
-     let frndId = self.chat.friendID as String
+        
+        if self.frndPlayerId.characters.count <= 0{
+            return;
+        }
+
+        let frndId = self.chat.friendID as String
         let message = "\(UserDefaults.SFSDefault(valueForKey: "full_name")) has sent you message:\(textMsg)"
 
      let content = ["reciever":frndId,"player_id":frndPlayerId,"senderId":UserDefaults.SFSDefault(valueForKey: "user_id"),"senderName":UserDefaults.SFSDefault(valueForKey: "full_name"),"senderPic":UserDefaults.SFSDefault(valueForKey: "profile_pic"),"chatId":self.chat.chatID,"messsage":message]
         
-        let parameter = ["contents": ["en": message], "include_player_ids":[frndPlayerId],"ios_badgeType":"Increase","ios_badgeCount":"1","data":content] as [String : Any];
+        
+        
+        let parameter = ["contents": ["en": message], "include_player_ids":[frndPlayerId],"ios_badgeType":"Increase","ios_badgeCount":"1","data":content,"Content-Type":"application/json"] as [String : Any];
         OneSignal.postNotification(parameter, onSuccess: { result in
             print("result = \(result!)")
         }, onFailure: {error in
@@ -434,14 +451,23 @@ class MessageController:UIViewController, InputbarDelegate, MessageGatewayDelega
     }
 
     @IBAction func favBtnAction(_ sender: Any) {
-
+        
         let chatID  = self.chat.chatID as String
         let ref : DatabaseReference!
         ref = Database.database().reference()
         let refChild = ref.child("ChatHistory")
         let refChatID = refChild.child(chatID)
-        let dataDict = ["favourite":"1"]
-        refChatID.updateChildValues(dataDict)
+        
+        if self.btnFav.isSelected {
+            self.btnFav.isSelected = false
+            let dataDict = ["favourite":"0"]
+            refChatID.updateChildValues(dataDict)
+        }else
+        {
+            self.btnFav.isSelected = true
+            let dataDict = ["favourite":"1"]
+            refChatID.updateChildValues(dataDict)
+        }
     }
 
     func updateChatHistory() {

@@ -18,6 +18,7 @@ class Chat: NSObject {
     var friendImage = NSString()
     var timeFirStamp : Int = 0
     var favourite : Int = 0
+    var unreadCount : Int = 0
     var lastMessage:Message! {
         willSet (val) {
             if self.lastMessage != nil {
@@ -35,6 +36,6 @@ class Chat: NSObject {
     }
 
     func save() {
-        LocalStorage.sharedInstance.storeChat(chat: self)
+        //LocalStorage.sharedInstance.storeChat(chat: self)
     }
 }

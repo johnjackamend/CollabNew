@@ -48,16 +48,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate,CLLocationManagerDelegate,
         FirebaseApp.configure()
         Database.database().isPersistenceEnabled = true
 
-        //Register devive for One Signal Push Notification
-        let onesignalInitSettings = [kOSSettingsKeyAutoPrompt: false]
-        OneSignal.initWithLaunchOptions(launchOptions,
-                                        appId: "940be648-d47e-454c-a57e-fd9350bb158a",
-                                        handleNotificationAction: nil,
-                                        settings: onesignalInitSettings)
-        OneSignal.inFocusDisplayType = OSNotificationDisplayType.notification;
-        OneSignal.promptForPushNotifications(userResponse: { accepted in
-            print("User accepted notifications: \(accepted)")
-        })
+        if TARGET_OS_SIMULATOR != 0 {
+           print("Simulater app")
+        }else{
+            //Register devive for One Signal Push Notification
+            let onesignalInitSettings = [kOSSettingsKeyAutoPrompt: false]
+            OneSignal.initWithLaunchOptions(launchOptions,
+                                            appId: "940be648-d47e-454c-a57e-fd9350bb158a",
+                                            handleNotificationAction: nil,
+                                            settings: onesignalInitSettings)
+            OneSignal.inFocusDisplayType = OSNotificationDisplayType.notification;
+            OneSignal.promptForPushNotifications(userResponse: { accepted in
+                print("User accepted notifications: \(accepted)")
+            })
+        }
+        
+        
 
         //For facebook share
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -96,7 +102,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,CLLocationManagerDelegate,
         userlocation = manager.location!
         print("locations = \(userlocation.coordinate.latitude) \(userlocation.coordinate.longitude)")
         if UserDefaults.SFSDefault(boolForKey: kLocationIsOff) == true {
-            if let _ : String? = UserDefaults.SFSDefault(valueForKey: "user_id") as! String
+            if let _ : String? = UserDefaults.SFSDefault(valueForKey: "user_id") as? String
             {
                self.updateLocation()
             }
@@ -144,6 +150,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate,CLLocationManagerDelegate,
         let status: OSPermissionSubscriptionState = OneSignal.getPermissionSubscriptionState()
         let userID = status.subscriptionStatus.userId
         UserDefaults.SFSDefault(setValue: userID ?? "", forKey: "player_id")
+        
+        if UserDefaults.SFSDefault(boolForKey: "isLogin") == true {
+            self.updateUserDataOnFirebase(playerId: userID!)
+        }
+        
+        
     }
 
     func didReceiveNotificationResponse(userInfo : Dictionary<String, Any> , isBackground: Bool){
@@ -185,8 +197,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate,CLLocationManagerDelegate,
             print("pushToken = \(String(describing: pushToken))")
             UserDefaults.SFSDefault(setValue: userID ?? "", forKey: "player_id")
             print("Subscribed for OneSignal push notifications!")
+            
+            if UserDefaults.SFSDefault(boolForKey: "isLogin") == true {
+                self.updateUserDataOnFirebase(playerId: userID!)
+            }
+            
         }
         print("SubscriptionStateChange: \n\(stateChanges)")
+    }
+    
+    // MARK: update player_id
+    func updateUserDataOnFirebase(playerId:String) {
+        let ref : DatabaseReference!
+        ref = Database.database().reference()
+        let refChild = ref.child("users")
+        let refChatID = refChild.child(UserDefaults.SFSDefault(valueForKey: "user_id") as! String )
+        
+        var profilePic = Dictionary<String, String>()
+        profilePic["player_id"] = playerId
+        refChatID.updateChildValues(profilePic)
+        
     }
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any]) {
@@ -195,6 +225,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate,CLLocationManagerDelegate,
         if info != nil
         {
             let custom = info["custom"] as? NSDictionary
+            
+            if custom != nil {
+                //send push notificaiton to home
+                // Define identifier
+                let notificationName = Notification.Name("messageArrived")
+                NotificationCenter.default.post(name: notificationName, object: nil)
+            }
+            
+            
             let  chatInfo = custom?["a"] as? NSDictionary
             let objChat = Chat()
             objChat.chatID = chatInfo?["chatId"] as! NSString
@@ -340,8 +379,14 @@ extension AppDelegate:UNUserNotificationCenterDelegate{
      let userInfo = notification.request.content.userInfo as! Dictionary<String, Any>
         let custom = userInfo["custom"] as? NSDictionary
         let  chatInfo = custom?["a"] as? NSDictionary
-
-
+        
+        if custom != nil {
+            //send push notificaiton to home
+            // Define identifier
+            let notificationName = Notification.Name("messageArrived")
+            NotificationCenter.default.post(name: notificationName, object: nil)
+        }
+        
         let userID : String = UserDefaults.SFSDefault(valueForKey: "user_id") as! String
 
         print(userID)

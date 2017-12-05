@@ -13,6 +13,7 @@ class ChatController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     @IBOutlet var tfSearch: UITextField!
     var arrayChatHistory = [Chat]()
+    var arrayChatHistoryMain = [Chat]()
     var searchResults = [Chat]()
     @IBOutlet weak var  tableView:UITableView!
     var filterCellArray = [String]()
@@ -35,7 +36,6 @@ class ChatController: UIViewController, UITableViewDataSource, UITableViewDelega
         AppManager.setTextfieldLeftView(image: #imageLiteral(resourceName: "search"), textField: tfSearch)
 
         if UserDefaults.SFSDefault(boolForKey: "isNotification") == true {
-
             UserDefaults.SFSDefault(setBool: false, forKey: "isNotification")
             let controller = self.storyboard?.instantiateViewController(withIdentifier: "messageController") as! MessageController
             controller.chat = chatModel
@@ -99,6 +99,7 @@ class ChatController: UIViewController, UITableViewDataSource, UITableViewDelega
                     self.arrayChatHistory.removeAll()
                 }
                 for key: String in allKeys {
+                    
                     print("\(String(describing: database[key]))")
                     let nodeDict = database[key] as? [String : Any] ?? [:]
                     let userID = UserDefaults.SFSDefault(valueForKey: "user_id") as! String
@@ -127,20 +128,26 @@ class ChatController: UIViewController, UITableViewDataSource, UITableViewDelega
                             objChat.friendID =  receiverID as NSString
                         }
                         
-                        
                         let unreadMsg = nodeDict["unread_message"] as? Array ?? []
-                        let frndInfo = unreadMsg[1] as? [String:Any] ?? [:]
-                        let myInfo  = unreadMsg[0]as? [String:Any] ?? [:]
                         objChat.favourite = Int((nodeDict["favourite"] as? String)!)!
                         
-                        
-                        if userID < objChat.friendID as String {
-                            let msgCounts = (myInfo["unreadMsg"]) as! String
-                            objChat.numberOfUnreadMessages =   Int(msgCounts)!
-                        }else{
-                            objChat.numberOfUnreadMessages = Int((frndInfo["unreadMsg"] as? String)!)!
+                        for unreadCountInfo in unreadMsg {
+                            let countLocal = unreadCountInfo as! [String:Any]
+                            if Int(countLocal["userId"] as! String) == UserDefaults.SFSDefault(integerForKey: USER_ID) {
+                                let msgCounts = (countLocal["unreadMsg"]) as! String
+                                objChat.numberOfUnreadMessages =   Int(msgCounts)!
+                                break;
+                            }
                         }
                         
+                        
+//                        if userID < objChat.friendID as String {
+//                            let msgCounts = (myInfo["unreadMsg"]) as! String
+//                            objChat.numberOfUnreadMessages =   Int(msgCounts)!
+//                        }else{
+//                            objChat.numberOfUnreadMessages = Int((frndInfo["unreadMsg"] as? String)!)!
+//                        }
+//                        
                         
                         let time  = nodeDict["timestamp"]
                         objChat.timeFirStamp = time as! Int
@@ -150,9 +157,11 @@ class ChatController: UIViewController, UITableViewDataSource, UITableViewDelega
                         let message = Message()
                         message.text = nodeDict["last_message"] as! String
                         message.chatId = key
+                        
                         let objContact = Contact()
                         objContact.identifier = key
                         objChat.contact = objContact
+                        
                         self.arrayChatHistory.append(objChat)
                     }
                     else{
@@ -162,6 +171,9 @@ class ChatController: UIViewController, UITableViewDataSource, UITableViewDelega
                 if (self.arrayChatHistory.count==0) {
                     //You have no friends"
                 }
+                
+                /*
+                
                 var sortedArray  = Array<Chat>()
                 if fav == "fav"{
                     sortedArray = self.arrayChatHistory.sorted(by: {$0.favourite > $1.favourite})
@@ -174,9 +186,10 @@ class ChatController: UIViewController, UITableViewDataSource, UITableViewDelega
                 }
                 self.arrayChatHistory.removeAll()
                 self.arrayChatHistory.append(contentsOf: sortedArray)
+                */
 
-                    self.tableView.reloadSections(IndexSet.init(integer: 1), with: .none)
-//                self.tableView.reloadData()
+                self.tableView.reloadSections(IndexSet.init(integer: 1), with: .none)
+
             }
         })
     }
@@ -342,13 +355,77 @@ class ChatController: UIViewController, UITableViewDataSource, UITableViewDelega
             cell.ivFilter.image = #imageLiteral(resourceName: "filter")
             cell.selectionStyle = .none
             if indexPath.row == 0 {
-                self.getChatHistory(fav: "unread");
+                //self.getChatHistory(fav: "unread");
+                
+                if self.arrayChatHistory.count > 0{
+                    self.arrayChatHistory.removeAll()
+                }
+                
+                if self.arrayChatHistoryMain.count > 0 {
+                    self.arrayChatHistory.append(contentsOf: self.arrayChatHistoryMain)
+                }
+               
+                self.arrayChatHistory.sort(by: { (chatObject1 : Chat, ChatObject2 : Chat) -> Bool in
+                    if chatObject1.numberOfUnreadMessages > ChatObject2.numberOfUnreadMessages {
+                        return true
+                    }else{
+                        return false
+                    }
+                })
+                
+                 self.tableView.reloadSections(IndexSet.init(integer: 1), with: .none)
+                
             }
             else if indexPath.row == 1 {
-                self.getChatHistory(fav: "recent");
+                //self.getChatHistory(fav: "recent");
+                
+                if self.arrayChatHistory.count > 0{
+                    self.arrayChatHistory.removeAll()
+                }
+                
+                if self.arrayChatHistoryMain.count > 0 {
+                    self.arrayChatHistory.append(contentsOf: self.arrayChatHistoryMain)
+                }
+                
+                self.arrayChatHistory.sort(by: { (chatObject1 : Chat, ChatObject2 : Chat) -> Bool in
+                    if chatObject1.timeFirStamp > ChatObject2.timeFirStamp {
+                        return true
+                    }else{
+                        return false
+                    }
+                })
+                
+                 self.tableView.reloadSections(IndexSet.init(integer: 1), with: .none)
             }
             else{
-                self.getChatHistory(fav: "fav")
+                //self.getChatHistory(fav: "fav")
+                
+                if self.arrayChatHistory.count > 0{
+                    self.arrayChatHistory.removeAll()
+                }
+                
+                if self.arrayChatHistoryMain.count > 0 {
+                    self.arrayChatHistory.append(contentsOf: self.arrayChatHistoryMain)
+                }
+                
+                let getList = self.arrayChatHistory as NSArray
+                
+                let favoritePredict = NSPredicate.init(block: { (object, _) -> Bool in
+                    let optionalObject : Chat = object as! Chat
+                    if optionalObject.favourite == 1 {
+                        return true
+                    }
+                    return false
+                })
+                
+                let filteredArray = getList.filtered(using: favoritePredict)
+                self.arrayChatHistory.removeAll()
+                self.arrayChatHistory.append(contentsOf: filteredArray as! [Chat])
+                
+                self.tableView.reloadSections(IndexSet.init(integer: 1), with: .none)
+                
+                
+                
             }
         }
         else{
@@ -413,16 +490,39 @@ class ChatController: UIViewController, UITableViewDataSource, UITableViewDelega
         if sender.isSelected == true {
             sender.isSelected = false
             filterCellArray.removeAll()
-            tableView.beginUpdates()
-            tableView.reloadSections(IndexSet.init(integer: 0), with: .none)
-            tableView.endUpdates()
+            
+            if self.arrayChatHistoryMain.count > 0 {
+                self.arrayChatHistory.removeAll()
+                self.arrayChatHistory.append(contentsOf: self.arrayChatHistoryMain)
+            }
+            
+        
+//            tableView.beginUpdates()
+//            tableView.reloadSections(IndexSet.init(integer: 0), with: .none)
+//            tableView.endUpdates()
+//            
+//            tableView.beginUpdates()
+//            self.tableView.reloadSections(IndexSet.init(integer: 1), with: .none)
+//            tableView.endUpdates()
+            
+            tableView.reloadData()
+            
         }
         else{
             sender.isSelected = true
             filterCellArray = ["Unread","Recent","Favs"]
+            
+            if self.arrayChatHistory.count > 0 {
+                self.arrayChatHistoryMain.removeAll()
+                self.arrayChatHistoryMain.append(contentsOf: self.arrayChatHistory)
+            }
+            
+    
             tableView.beginUpdates()
             tableView.reloadSections(IndexSet.init(integer: 0), with: .none)
             tableView.endUpdates()
+            
+            
         }
     }
 

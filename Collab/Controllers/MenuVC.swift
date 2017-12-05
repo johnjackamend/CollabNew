@@ -13,7 +13,7 @@ class MenuVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
 
     @IBOutlet var tblMenu: UITableView!
     var selectedMenuItem : Int = 0
-    var arrayImages = ["Home","Me","My Chat","Collab with","Settings","Invite Friends","Logout"]
+    var arrayImages = ["Home","Me","MyChat","Collab with","Settings","Invite Friends","Logout"]
     var arraySelectedImage = ["Home1","Me1","My Chat1","Collab with1","Settings1","Invite Friends1","Logout1"]
     @IBOutlet var ivUserImage: UIImageView!
     @IBOutlet var lblUserFullName: UILabel!    
@@ -25,10 +25,7 @@ class MenuVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         tblMenu.delegate = self
         
         self.navigationController?.navigationBar.isHidden = true
-        var name = UserDefaults.SFSDefault(valueForKey:  "full_name") as! String
-        
-        name = name.capitalized
-        lblUserFullName.text = name
+       
 
 //        let url = URL.init(string: userInfo["profile_pic"] as! String)
 //        ivUserImage.sd_setImage(with: url)
@@ -36,6 +33,11 @@ class MenuVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        
+        var name = UserDefaults.SFSDefault(valueForKey:  "full_name") as! String
+        name = name.capitalized
+        lblUserFullName.text = name
+        
         let imageUrl = URL.init(string: UserDefaults.SFSDefault(valueForKey:  "profile_pic") as! String)
         if imageUrl != nil {
             ivUserImage.sd_setImage(with: imageUrl!)
@@ -50,7 +52,7 @@ class MenuVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.upadteImage), name: NSNotification.Name(rawValue: "updateProfilePic"), object: nil)
         
-         arrayImages = ["Home","Me","My Chat","Collab with","Settings","Invite Friends","Logout"]
+         arrayImages = ["Home","Me","MyChat","Collab with","Settings","Invite Friends","Logout"]
          arraySelectedImage = ["Home1","Me1","My Chat1","Collab with1","Settings1","Invite Friends1","Logout1"]
         
         
@@ -142,7 +144,13 @@ class MenuVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         let cell = tblMenu.dequeueReusableCell(withIdentifier: identifier) as! SideMenuCell
     
         cell.selectionStyle = .none
-        cell.lblMenu.text = arrayImages[indexPath.row]
+        
+        if indexPath.row == 2 {
+            cell.lblMenu.text = "My Chat"
+        }else{
+            cell.lblMenu.text = arrayImages[indexPath.row]
+        }
+        
         cell.ivIcon.image = UIImage.init(named: arrayImages[indexPath.row])
         
         return cell

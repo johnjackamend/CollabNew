@@ -12,42 +12,39 @@ import Firebase
 
 class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavigationControllerDelegate ,NPAudioStreamDelegate,UIGestureRecognizerDelegate,UITextFieldDelegate,MBProgressHUDDelegate{
     
-    @IBOutlet weak var btnMusic: UIButton!
+    //@IBOutlet weak var btnMusic: UIButton!
     var HUD : MBProgressHUD!
-    @IBOutlet weak var btnPlayPause: UIButton!
+    //@IBOutlet weak var btnPlayPause: UIButton!
+    
     @IBOutlet var tfDatePicker: UITextField!
     @IBOutlet weak var collectionImages: UICollectionView!
-    @IBOutlet weak var lblSong: UILabel!
+    @IBOutlet weak var lblSong: UITextField!
     @IBOutlet weak var tfEmail: UITextField!
     @IBOutlet weak var tfBio: UITextField!
     @IBOutlet weak var outletBtnNext: UIButton!
+    @IBOutlet weak var btnSave: UIButton!
     @IBOutlet var lblName: UILabel!
+    @IBOutlet var tfName: UITextField!
     @IBOutlet var btnOutletSideMenu: UIButton!
     @IBOutlet weak var btnMale: UIButton!
     @IBOutlet weak var btnFemale: UIButton!
-
     @IBOutlet var viewDatePicker: UIView!
     @IBOutlet var ivSong: UIImageView!
-    var isEdited = Bool()
-    
     @IBOutlet var outletBtnSideMenu: UIButton!
+    
     var gender = String()
-
+    var isEdited = Bool()
     var isPlaying: Bool = Bool()
     var songStr = ""
     var cellTag = NSInteger()
     var userDataDict = Dictionary <String, Any>()
-    
     var imageDict = Dictionary <String, Any>()
-    
     var audioStream : NPAudioStream = NPAudioStream()
-    
     var urlArray = NSMutableArray()
     var dataDict = NSDictionary()
     var picker = UIImagePickerController()
     var isFirstTime = Bool()
     var dateString = String()
-    
     let searchMusic = SearchMusicVC()
     var outSideController = NSString()
     
@@ -63,13 +60,13 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
         self.navigationController?.navigationBar.isHidden = true
         if outSideController == "yes" {
             TYPE_CONTROLLER = controllerType.externalController
-            lblSong.text = "Tap music to add song"
+            lblSong.text = "Portfolio link..."
             viewDatePicker.isHidden = true
             ivSong.isHidden = false
+            btnSave.isHidden = true
             self.view.bringSubview(toFront: ivSong)
             btnMale.isSelected = false
             btnFemale.isSelected = false
-
         }
         else{
             self.getUser()
@@ -88,13 +85,14 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
         //draw border on textfields or on button
         self.tfBio.layer.borderColor = UIColor.black.cgColor
         self.tfBio.layer.borderWidth = 4.0
-        
+        self.lblSong.layer.borderColor = UIColor.black.cgColor
+        self.lblSong.layer.borderWidth = 1.0
         self.tfDatePicker.layer.borderColor = UIColor.black.cgColor
         self.tfDatePicker.layer.borderWidth = 4.0
         
-        
         let leftView1 = UIView.init(frame: CGRect.init(x: 0, y: 0, width: 10, height: 10))
         let leftView2 = UIView.init(frame: CGRect.init(x: 0, y: 0, width: 10, height: 10))
+        let leftView3 = UIView.init(frame: CGRect.init(x: 0, y: 0, width: 10, height: 10))
         
         self.tfBio.leftView = leftView1
         self.tfBio.leftViewMode = .always
@@ -102,8 +100,11 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
         self.tfDatePicker.leftView = leftView2
         self.tfDatePicker.leftViewMode = .always
         
-        self.btnMusic.layer.borderColor = UIColor.black.cgColor
-        self.btnMusic.layer.borderWidth = 1.5
+        self.lblSong.leftView = leftView3
+        self.lblSong.leftViewMode = .always
+        
+//        self.btnMusic.layer.borderColor = UIColor.black.cgColor
+//        self.btnMusic.layer.borderWidth = 1.5
         
     }
        override func viewWillAppear(_ animated: Bool) {
@@ -118,12 +119,12 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
             outletBtnNext.addTarget(self, action: #selector(self.nextAction(_:)), for: .touchUpInside)
             btnOutletSideMenu.isHidden = true
             var name = userDataDict["full_name"] as? String
-
             tfBio.layer.borderWidth = 1.0
             tfBio.layer.borderColor = UIColor.black.cgColor
             
             name = name?.capitalized
             lblName.text = name
+            tfName.text = name
             if isFirstTime == true{
                 isFirstTime = false
                 collectionImages.reloadData()
@@ -139,6 +140,8 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
             outletBtnNext.setTitle("My Profile", for: .normal)
             outletBtnNext.addTarget(self, action: #selector(self.viewMyProfile(_:)), for: .touchUpInside)
             btnOutletSideMenu.isHidden = false
+            
+            tfName.text =  UserDefaults.SFSDefault(valueForKey:  "full_name") as? String
             lblName.text =  UserDefaults.SFSDefault(valueForKey:  "full_name") as? String
         }
 
@@ -174,8 +177,13 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
             AppManager.showMessageView(view: self.view, meassage: "Please upload all images")
             return
         }
-        if  lblSong.text!  == "" || lblSong.text!.isEmpty || lblSong.text! == "Tap music to add song" {
-            AppManager.showMessageView(view: self.view, meassage: "Please first add song")
+        if  self.lblSong.text!  == "" || self.lblSong.text!.isEmpty || lblSong.text! == "Portfolio link..." {
+            AppManager.showMessageView(view: self.view, meassage: "Please first portfolio link")
+            return
+        }
+        
+        if  self.verifyUrl(urlString: self.lblSong.text!) == false {
+            AppManager.showMessageView(view: self.view, meassage: "Please enter valid portfolio link url")
             return
         }
         
@@ -184,39 +192,47 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
             return
         }
         
+        //me
+        if tfName.text == "" || tfName.text == nil{
+            AppManager.sharedInstance.shakeTextField(textField: tfName, withText: "Please enter name", currentText: "Max 32 characters")
+            return
+        }
+        
         var para  = Dictionary<String, Any>()
         
         if TYPE_CONTROLLER == controllerType.externalController {
             para = ["user_id":UserDefaults.SFSDefault(valueForKey: USER_ID),
                                     "bio":tfBio.text!,
-                                    "music_file_url":dataDict["songUrl"] ?? "" ,
-                                    "music_file_name" : lblSong.text!,
+                                    "music_file_url":lblSong.text! ,
+                                    "music_file_name" : "",
                                     "email":tfEmail.text!,
-                                    "gender" : gender]
+                                    "gender" : gender,"name" : tfName.text!]
         }
         else{
             if dataDict.allKeys.count != 0 {
                 para = ["user_id":UserDefaults.SFSDefault(valueForKey: USER_ID),
                         "bio":tfBio.text!,
-                        "music_file_url":dataDict["songUrl"] ?? "",
-                        "music_file_name" : lblSong.text!,
+                        "music_file_url":lblSong.text!,
+                        "music_file_name" : "",
                         "dob" : dateString,
                         "email":tfEmail.text!,
-                "gnder": gender]
+                "gnder": gender,"name" : tfName.text!]
             }
             else{
                 if dateString.isEmpty != true {
                     para = ["user_id":UserDefaults.SFSDefault(valueForKey: USER_ID),
                             "bio":tfBio.text!,
-                            "music_file_name" : lblSong.text!,
+                            "music_file_name" : "",
                             "dob" : dateString,
-                            "email":tfEmail.text!]
+                            "music_file_url":lblSong.text!,
+                            "email":tfEmail.text!,"name" : tfName.text!]
                 }
                 else{
                     para = ["user_id":UserDefaults.SFSDefault(valueForKey: USER_ID),
                             "bio":tfBio.text!,
-                            "music_file_name" : lblSong.text!,
-                            "email":tfEmail.text!]
+                            "music_file_name" : "",
+                            "music_file_url":lblSong.text!,
+                            "email":tfEmail.text!,"name" : tfName.text!]
                 }
                 
             }
@@ -232,15 +248,19 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
             print("json result \(jsonResult)")
             if jsonResult["success"] as! NSNumber   == 1{
                 
+                //if successfully data received update full name
+                let userInfo: Dictionary = jsonResult["user_data"] as! Dictionary<String, Any>
+                UserDefaults.SFSDefault(setValue: userInfo, forKey: "userInfo")
+                UserDefaults.SFSDefault(setValue: userInfo["full_name"]!, forKey:  "full_name")
+                
                 if jsonResult["success"] as! NSNumber   == 1{
                      if TYPE_CONTROLLER != controllerType.externalController {
-                    self.menuContainerViewController.toggleLeftSideMenuCompletion {
-                    }
+                            self.menuContainerViewController.toggleLeftSideMenuCompletion {
+                            self.menuContainerViewController.leftMenuViewController.viewWillAppear(true)
+                            }
                     }
                      else{
-                        let userInfo: Dictionary = jsonResult["user_data"] as! Dictionary<String, Any>
                         let congratsVC = self.storyboard?.instantiateViewController(withIdentifier: "CongratsVC") as! CongratsVC
-                        UserDefaults.SFSDefault(setValue: userInfo, forKey: "userInfo")
                         self.navigationController?.pushViewController(congratsVC, animated: true)
                     }
                 }
@@ -249,6 +269,18 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
         }) { (error) in
             AppManager.showServerErrorDialog(error, view: self.view)
         }
+    }
+    
+    func verifyUrl (urlString: String?) -> Bool {
+        //Check for nil
+        if  self.lblSong.text!.characters.count > 0 {
+            // create NSURL instance
+            if let url = NSURL(string: self.lblSong.text!) {
+                // check if your application can open the NSURL instance
+                return UIApplication.shared.canOpenURL(url as! URL)
+            }
+        }
+        return false
     }
     
     func deleteImage(mediaKey : String)  {
@@ -332,7 +364,11 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
         
                 let dataDict = jsonResult["data"] as! Dictionary<String, Any>
                 self.setUpView(userDataDict: dataDict["app_users"] as! Dictionary<String, Any> )
+                
+                if dataDict["gallery"] != nil{
                    self.imageDict = dataDict["gallery"] as! Dictionary<String, Any>
+                }
+                
                 self.collectionImages.reloadData()
                 UserDefaults.SFSDefault(setValue: self.userDataDict, forKey: "userInfo")
             }
@@ -386,9 +422,9 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
     }
     
     func setUpView(userDataDict : Dictionary<String, Any>)  {
-    
+        tfName.text = userDataDict["full_name"] as? String
         lblName.text = userDataDict["full_name"] as? String
-        lblSong.text = userDataDict["music_file_name"] as? String
+        lblSong.text = userDataDict["music_file_url"] as? String
         
         tfBio.text =  userDataDict["bio"] as? String
         tfEmail.text = userDataDict["email"] as? String
@@ -497,7 +533,7 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
     }
     
     func btnPlaySongAction(_ sender :UIButton)  {
-        btnPlayPause.setImage(UIImage.init(named: "pause"), for: .normal)
+        //btnPlayPause.setImage(UIImage.init(named: "pause"), for: .normal)
         audioStream.callMethod(urlArray)
         audioStream.selectIndex(forPlayback: 0)
         
@@ -507,7 +543,7 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
     }
     
     func btnPauseSongAction(_ sender :UIButton)  {
-        btnPlayPause.setImage(UIImage.init(named: "play"), for: .normal)
+        //btnPlayPause.setImage(UIImage.init(named: "play"), for: .normal)
         audioStream.pause()
         isPlaying = false
     }
@@ -559,7 +595,9 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
         isEdited = true
         dataDict = songDict as! Dictionary<String, Any> as NSDictionary
         songStr = dataDict["songName"] as! String
-        lblSong.text = songStr
+        //lblSong.text = songStr
+        lblSong.text = dataDict["songUrl"] as! String
+        
         let songUrl = NSURL.init(string: dataDict["songUrl"]! as! String)
         if urlArray.count != 0 {
             urlArray.removeAllObjects()
@@ -637,7 +675,7 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
         // lblDuration.text = String(format:"%.0f Seconds",time)
         if time >= 15 {
             audioStream.pause()
-            btnPlayPause.setImage(UIImage.init(named: "play"), for: .normal)
+            //btnPlayPause.setImage(UIImage.init(named: "play"), for: .normal)
             audioStream.seekToTime(inSeconds: 0)
             isPlaying = false
             print("Stop Player")
@@ -709,21 +747,29 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
     func collectionView(_ collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: IndexPath) {
         self.showActionSheet(indexPath.item)
     }
+    
+    
+    
     func collectionView(_ collectionView: UICollectionView, moveItemAtIndexPath sourceIndexPath: NSIndexPath,toIndexPath destinationIndexPath: NSIndexPath) {
         
    //---------------- Swaping images------------------------
         // cell 1
         let cellSource = collectionImages.cellForItem(at: sourceIndexPath as IndexPath)  as! ImagesCell
         
-        // cell 2
-        let cellDestination = collectionImages.cellForItem(at: destinationIndexPath as IndexPath) as! ImagesCell
+        if let _ = collectionImages.cellForItem(at: destinationIndexPath as IndexPath) {
+            // cell 2
+            let cellDestination = collectionImages.cellForItem(at: destinationIndexPath as IndexPath) as! ImagesCell
+
+            cellSource.btnCross.tag = sourceIndexPath.item
+            cellDestination.btnCross.tag = destinationIndexPath.item
+        }
         
         if sourceIndexPath.item == 0  { // source cell is first cell
             if destinationIndexPath.item == 1 {
-//                swapImage
+                //                swapImage
                 
                 let swappedDict : Dictionary = ["profile_pic":self.imageDict["image1"]!,
-                               "image1":self.imageDict["profile_pic"]!] as Dictionary<String, Any>
+                                                "image1":self.imageDict["profile_pic"]!] as Dictionary<String, Any>
                 self.swapImage(dictImages: swappedDict )
             }
             else{
@@ -758,8 +804,8 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
                 self.swapImage(dictImages: swappedDict )
             }
         }
-        cellSource.btnCross.tag = sourceIndexPath.item
-        cellDestination.btnCross.tag = destinationIndexPath.item
+        
+        
         
     }
     
@@ -882,4 +928,9 @@ class MeVC: UIViewController,PassSongData,UIImagePickerControllerDelegate,UINavi
         refChatID.updateChildValues(profilePic)
 
     }
+    
+    @IBAction func btnSavePressed(_ sender: Any) {
+        self.openSideMenu(sender)
+    }
+    
 }

@@ -32,7 +32,7 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
     var isPlaying = Bool()
     var audioStream : NPAudioStream = NPAudioStream()
     
-    @IBOutlet weak var container : YSLDraggableCardContainer! // = YSLDraggableCardContainer()
+    var container = YSLDraggableCardContainer()
     
     var userImage = String()
     var userName = String()
@@ -71,14 +71,24 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
     override func viewDidLoad() {
         super.viewDidLoad()
         self.btnChat.isHidden = false
-        distance = 8000
+        distance = 10000
         isFakeProfiles = false
         isLastProfile = false
         noInternetView = Bundle.main.loadNibNamed("NoInternetView", owner: self, options: nil)?[0] as! NoInternetView
         noInternetView.delegate = self
         
         //Thread.detachNewThreadSelector(#selector(HomeVC.getFriends), toTarget: self, with: nil)
-
+        let notificationName = Notification.Name("messageArrived")
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(HomeVC.methodOfReceivedNotification), name: notificationName, object: nil)
+        
+    }
+    
+    func methodOfReceivedNotification(){
+        OperationQueue.main.addOperation {
+            //
+            self.btnChat.setImage(UIImage.init(named: "chat_notification"), for: .normal)
+        }
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -92,22 +102,21 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
             self.navigationController?.navigationBar.isHidden = true
             self.view.backgroundColor = UIColor.cyan
 
-//            container.frame = CGRect.init(x: 0, y: 64, width: self.view.frame.size.width, height: self.view.frame.size.height-64)
+            container.frame = CGRect.init(x: 0, y: 64, width: heightCalculated, height: UIScreen.main.bounds.size.height-64)
             
-            
-            //container.frame = CGRect.init(x: 0, y: 64, width: UIScreen.main.bounds.size.width, height:heightCalculated)
-            
-            container.backgroundColor = UIColor.clear
-
             container.dataSource = self
             container.delegate = self
+           
+            //container.frame = CGRect.init(x: 0, y: 64, width: UIScreen.main.bounds.size.width, height:heightCalculated)
+            container.backgroundColor = UIColor.clear
 
             self.view.layer.addSublayer(pulsator)
             pulsator.position = self.view.center
             pulsator.numPulse = 3
+            pulsator.pulseInterval = 5
             pulsator.backgroundColor =  UIColor(red: 192.0/255.0, green: 135.0/255.0, blue: 51.0/255.0, alpha: 1.0).cgColor
             pulsator.radius = ScreenSize.SCREEN_WIDTH/2
-            //self.view.addSubview(container)
+            self.view.addSubview(container)
             container.isHidden = true
 
             isPlaying = false
@@ -166,12 +175,11 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
                 self.pulsator.stop()
                 let dataArray = NSArray.init(object: jsonResult["user_data"]!)
                 self.filteredData = dataArray[0] as! NSArray
-                self.pulsator.stop()
                 self.container.isHidden = false
                 self.container.reload()
             }
             else if jsonResult["success"] as! NSNumber == 101{
-              self.pulsator.stop()
+                self.pulsator.stop()
                 UserDefaults.SFSDefault(setBool: true, forKey: kLocationIsOff)
                 AppManager.sharedInstance.callAlert(view: self, headerString: DENIED_LOCATION_HEADER, messageString: DENIED_LOCATION_MESSAGE)
             }
@@ -190,11 +198,8 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
             AppManager.sharedInstance.hidHud()
             if AppManager.isInternetError(error) == true  {
                 self.noInternetView.frame = CGRect.init(x: self.view.frame.origin.x, y: 64, width: self.view.frame.size.width, height: self.view.frame.size.height - 64 )
-
-
                 //self.noInternetView.frame = self.viewCanAgain.frame
                 self.view.addSubview(self.noInternetView)
-
             }
             else{
                 AppManager.sharedInstance.hidHud()
@@ -325,7 +330,9 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
     }
 
     func slideRight(tag : NSInteger)  {
-        audioStream.pause()
+        //if playing then pause music
+        self.btnPauseSongAction()
+        
         // infoView.btnPlayPause.setImage(UIImage.init(named: "play"), for: .normal)
         infoView.btnPlayPause.isSelected = false
         infoView.btnPlayPause.setImage(#imageLiteral(resourceName: "play"), for: .normal)
@@ -358,7 +365,10 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
         }
     }
     func slideleft(tag : NSInteger)  {
-        audioStream.pause()
+        
+        //if playing then pause music
+        self.btnPauseSongAction()
+        
         // infoView.btnPlayPause.setImage(UIImage.init(named: "play"), for: .normal)
         infoView.btnPlayPause.isSelected = false
         infoView.btnPlayPause.setImage(#imageLiteral(resourceName: "play"), for: .normal)
@@ -395,7 +405,10 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
 
 
     func rejectRequest(_ sender: UIButton)  {
-        audioStream.pause()
+        
+        //if playing then pause music
+        self.btnPauseSongAction()
+        
         // infoView.btnPlayPause.setImage(UIImage.init(named: "play"), for: .normal)
         infoView.btnPlayPause.isSelected = false
         infoView.btnPlayPause.setImage(#imageLiteral(resourceName: "play"), for: .normal)
@@ -444,7 +457,10 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
 
     }
     func acceptRequest(_ sender: UIButton)  {
-        audioStream.pause()
+        
+        //if playing then pause music
+        self.btnPauseSongAction()
+        
         // infoView.btnPlayPause.setImage(UIImage.init(named: "play"), for: .normal)
         infoView.btnPlayPause.isSelected = false
         infoView.btnPlayPause.setImage(#imageLiteral(resourceName: "play"), for: .normal)
@@ -526,10 +542,23 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
 
 
     func btnPlaySongAction()  {
+        let Controller = (self.storyboard?.instantiateViewController(withIdentifier: "PortfolioVC"))! as! PortfolioVC
+        Controller.portfolioURLString = urlarray[0]  as! URL
+        definesPresentationContext = true
+        Controller.modalPresentationStyle = .overCurrentContext
+        let transition = CATransition()
+        transition.duration = 0.3
+        transition.type = kCATransitionFade
+        transition.subtype = kCATransitionFromRight
+        navigationController?.view?.layer.add(transition, forKey: kCATransition)
+        self.navigationController?.pushViewController(Controller, animated: false)
+        
+        /*
         audioStream.callMethod(urlarray)
         audioStream.selectIndex(forPlayback: 0)
         audioStream.play()
         isPlaying = true
+      */
     }
 
     func btnPauseSongAction()  {
@@ -577,7 +606,7 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
     func cardContainerViewNextView(with index: Int) -> UIView! {
         let dataDict = self.filteredData[index] as! Dictionary<String, Any>
 
-        let view = CardView.init(frame: .init(x: 0, y: 0, width: heightCalculated , height: heightCalculated))
+        let view = CardView.init(frame: .init(x: 0, y: 0, width: heightCalculated , height: UIScreen.main.bounds.size.height-64))
 
         view.backgroundColor = UIColor.lightGray
 
@@ -596,7 +625,7 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
 
         infoView.isUserInteractionEnabled = true
         let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.showPopUpView))
-        infoView.addGestureRecognizer(tapGesture)
+       // infoView.addGestureRecognizer(tapGesture)
         infoView.tag = index
         
         let heightValue = UIScreen.main.bounds.size.height - (heightCalculated+64) ;
@@ -801,7 +830,10 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
     //MARK: Tap gesture Action
     func showPopUpView(sender : UITapGestureRecognizer) {
         if isPlaying == true {
-            audioStream.pause()
+            
+            //if playing then pause music
+            self.btnPauseSongAction()
+            
             infoView.btnPlayPause.isSelected = false
             infoView.btnPlayPause.setImage(#imageLiteral(resourceName: "play"), for: .normal)
             audioStream.seekToTime(inSeconds: 0)
@@ -841,7 +873,10 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
 
     @IBAction func dismissPopUpViewAction(_ sender: Any) {
         if isPlaying == true {
-            audioStream.pause()
+            
+            //if playing then pause music
+            self.btnPauseSongAction()
+            
             btnPlaySongPopUpView.isSelected = false
             btnPlaySongPopUpView.setImage(#imageLiteral(resourceName: "play"), for: .normal)
             audioStream.seekToTime(inSeconds: 0)
@@ -859,6 +894,14 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
     //MARK: Start Chat Methods
 
     @IBAction func goToChatControllerAction(_ sender: Any) {
+        
+        OperationQueue.main.addOperation {
+            //
+            self.btnChat.setImage(UIImage.init(named: "MyChat"), for: .normal)
+        }
+        
+        
+        
         self.btnPauseSongAction()
         let controller = self.storyboard?.instantiateViewController(withIdentifier: "ChatController") as! ChatController
         self.navigationController?.pushViewController(controller, animated: false)
@@ -908,11 +951,22 @@ class HomeVC: UIViewController, YSLDraggableCardContainerDelegate, YSLDraggableC
     func viewInstaProfilePopUp(_sender :UIButton)  {
         let dataDict = self.filteredData[_sender.tag] as! Dictionary<String, Any>
         if let url = URL(string: dataDict["instagram_profile_link"] as! String) {
+            /*
             if #available(iOS 10.0, *) {
                 UIApplication.shared.open(url, options: [:])
             } else {
                 UIApplication.shared.openURL(url as URL)
-            }
+            }*/
+            let Controller = (self.storyboard?.instantiateViewController(withIdentifier: "PortfolioVC"))! as! PortfolioVC
+            Controller.portfolioURLString = url
+            definesPresentationContext = true
+            Controller.modalPresentationStyle = .overCurrentContext
+            let transition = CATransition()
+            transition.duration = 0.3
+            transition.type = kCATransitionFade
+            transition.subtype = kCATransitionFromRight
+            navigationController?.view?.layer.add(transition, forKey: kCATransition)
+            self.navigationController?.pushViewController(Controller, animated: false)
         }
     }
 

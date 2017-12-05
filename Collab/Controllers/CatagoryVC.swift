@@ -384,7 +384,7 @@ class CatagoryVC: UIViewController {
                 sender.isSelected = true
             }
             else{
-                AppManager.showMessageView(view: self.view, meassage: "You can only choose a maximum of 2 :)")
+                AppManager.showMessageView(view: self.view, meassage: "You can only choose a maximum of 2")
             }
 
         }
@@ -400,13 +400,13 @@ class CatagoryVC: UIViewController {
 
         }
         else{
-            if arrayCatagoryServer.count < 2 {
+           if arrayCatagoryServer.count < 2 {
                 arrayCatagoryServer.add(arrayCatagory[indexPath.row + 1])
                 sender.setImage(UIImage.init(named: "radio_sel"), for: .normal)
                 sender.isSelected = true
             }
             else{
-                AppManager.showMessageView(view: self.view, meassage: "You can only choose a maximum of 2 :)")
+                AppManager.showMessageView(view: self.view, meassage: "You can only choose a maximum of 2")
             }
         }
     }

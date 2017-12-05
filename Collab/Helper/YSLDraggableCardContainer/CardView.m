@@ -79,7 +79,7 @@
     cell.contentMode = UIViewContentModeScaleAspectFill;
     _imageView = [[UIImageView alloc]init];
     _imageView.backgroundColor = [UIColor lightGrayColor];
-    _imageView.contentMode = UIViewContentModeScaleAspectFill;
+    _imageView.contentMode = UIViewContentModeTop;
     _imageView.frame = CGRectMake(0, 0, [[UIScreen mainScreen] bounds].size.width, [[UIScreen mainScreen] bounds].size.width );
     NSURL *imageUrl = [NSURL URLWithString:[_imagesArrayLocal objectAtIndex:indexPath.item]];
     [_imageView sd_setImageWithURL:imageUrl];

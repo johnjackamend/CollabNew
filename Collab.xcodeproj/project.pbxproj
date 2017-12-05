@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		189401761FA1D2BD0021675C /* PortfolioVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 189401751FA1D2BD0021675C /* PortfolioVC.swift */; };
 		18B09B3D1F680C9000DCD53F /* Pacifico.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 18B09B3C1F680C9000DCD53F /* Pacifico.ttf */; };
 		18BD97E71F7CD0BF00FC9D9C /* SliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BD97E61F7CD0BF00FC9D9C /* SliderCell.swift */; };
 		39170099C33E25F1FFDB8982 /* Pods_Collab.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 837834B3C1F90BF72B8FBCA1 /* Pods_Collab.framework */; };
@@ -128,6 +129,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		189401751FA1D2BD0021675C /* PortfolioVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioVC.swift; sourceTree = "<group>"; };
 		18B09B3C1F680C9000DCD53F /* Pacifico.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Pacifico.ttf; sourceTree = "<group>"; };
 		18BD97E61F7CD0BF00FC9D9C /* SliderCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SliderCell.swift; sourceTree = "<group>"; };
 		34BB7D030C2F2213C95FC562 /* Pods-CollabTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CollabTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CollabTests/Pods-CollabTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -519,6 +521,7 @@
 				FA2BAE671EAE10F000D18AAB /* InviteFriendsVC.swift */,
 				EA9653D91EC4324900A0FE1E /* FullProfileVC.swift */,
 				EA9653DD1EC46C0600A0FE1E /* BlockVC.swift */,
+				189401751FA1D2BD0021675C /* PortfolioVC.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -1031,6 +1034,7 @@
 				EA68969D1F31FC0700AB2542 /* SCLSwitchView.m in Sources */,
 				FAAD10341EB6F369006DB5BA /* YSLCardView.m in Sources */,
 				FA2BAE351EAE08A700D18AAB /* Extensions.swift in Sources */,
+				189401761FA1D2BD0021675C /* PortfolioVC.swift in Sources */,
 				FA90D6911EBAFC8E00C18E3D /* Message.swift in Sources */,
 				FA5CA4501EB30F580022C886 /* UILabelExtenstion.swift in Sources */,
 				FA2BAE5A1EAE0AA700D18AAB /* SideMenuCell.swift in Sources */,
@@ -1175,8 +1179,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Collab/Collab.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Jack Amend (DS8L2P98RJ)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Jack Amend (DS8L2P98RJ)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Jack Amend (CRHT83L9F6)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Jack Amend (CRHT83L9F6)";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = CRHT83L9F6;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1188,8 +1193,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sfs.collab;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "91a6b35c-18c5-4cd4-b8d4-90f2f14f5203";
-				PROVISIONING_PROFILE_SPECIFIER = collabDev_5May2017;
+				PROVISIONING_PROFILE = "3281f7b7-e580-4384-9439-1ff2bc78b6d5";
+				PROVISIONING_PROFILE_SPECIFIER = collabAppStore_5May;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Collab-Bridging-Header.h";
 				SWIFT_OBJC_INTERFACE_HEADER_NAME = "Collab-Swift.h";
@@ -1205,6 +1210,7 @@
 				CODE_SIGN_ENTITLEMENTS = Collab/Collab.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Jack Amend (CRHT83L9F6)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Jack Amend (CRHT83L9F6)";
+				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = CRHT83L9F6;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1217,7 +1223,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.sfs.collab;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "3281f7b7-e580-4384-9439-1ff2bc78b6d5";
-				"PROVISIONING_PROFILE[sdk=*]" = "3281f7b7-e580-4384-9439-1ff2bc78b6d5";
+				"PROVISIONING_PROFILE[sdk=*]" = "7ce616e9-279e-4f2d-8c87-370cd4eea156";
 				PROVISIONING_PROFILE_SPECIFIER = collabAppStore_5May;
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Collab-Bridging-Header.h";

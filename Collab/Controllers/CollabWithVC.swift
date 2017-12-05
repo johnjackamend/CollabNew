@@ -89,8 +89,12 @@ class CollabWithVC: UIViewController , UITableViewDelegate , UITableViewDataSour
         let indexPath:NSIndexPath = IndexPath(row: 1, section: 2) as NSIndexPath
         
         let cell : SliderCell = self.tblCat.cellForRow(at: indexPath as IndexPath) as! SliderCell
+        if Int(sender.value) == 100 {
+            cell.lblCollab.text = String(format:"Global")
+        }else{
+            cell.lblCollab.text = String(format:"%@ mile",self.distanceStr)
+        }
         
-        cell.lblCollab.text = String(format:"%@ mile",self.distanceStr)
     }
 
     @IBAction func musicianAction(_ sender: Any) {
@@ -276,7 +280,7 @@ class CollabWithVC: UIViewController , UITableViewDelegate , UITableViewDataSour
         if section == 1 {
             return 1
         }else if section == 2 {
-            return 2
+            return 1
         }
         return arrayCatagory.count/2
     }
@@ -421,7 +425,7 @@ class CollabWithVC: UIViewController , UITableViewDelegate , UITableViewDataSour
             
             var cell : SliderCell
             
-            if indexPath.row == 0 {
+            if indexPath.row == 11 {
                 cell = tableView.dequeueReusableCell(withIdentifier: "SliderCell", for: indexPath) as! SliderCell
             }else {
                  cell = tableView.dequeueReusableCell(withIdentifier: "SliderCell2", for: indexPath) as! SliderCell
@@ -429,15 +433,20 @@ class CollabWithVC: UIViewController , UITableViewDelegate , UITableViewDataSour
             
             cell.selectionStyle = .none
             
-            if indexPath.row == 0 {
+            if indexPath.row == 11 {
                 cell.lblAge.text = "Age"
                 
                 let minAge = CGFloat(Double(self.minAgeStr)!)
                 let maxAge = CGFloat(Double(self.maxAgeStr)!)
-                cell.lblCollab.text = String(format:"%d-%d", Int(minAge),Int(maxAge))
-                cell.sliderAge.setLeftValue(minAge, rightValue: maxAge)
+                //cell.lblCollab.text = String(format:"%d-%d", Int(minAge),Int(maxAge))
+                cell.lblCollab.text = "All Age"
+                cell.sliderAge.setLeftValue(0.0, rightValue: maxAge)
+                cell.sliderAge.setMinValue(0.0, maxValue: 40.0)
+                cell.sliderAge.minimumDistance = 2.0
+                cell.sliderAge.isUserInteractionEnabled = false
                 
-//                cell.sliderAge.removeTarget(self, action: #selector(self.ageSliderAction(_ :)), for: .valueChanged)
+                
+//              cell.sliderAge.removeTarget(self, action: #selector(self.ageSliderAction(_ :)), for: .valueChanged)
                 
                 cell.sliderAge.addTarget(self, action: #selector(self.ageSliderAction(_ :)), for: .valueChanged)
                 
@@ -468,27 +477,28 @@ class CollabWithVC: UIViewController , UITableViewDelegate , UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let labelText = UILabel.init(frame: CGRect.init(x: 0, y: 0, width: tableView.frame.size.width, height: 40))
-        
+        //let labelText = UILabel.init(frame: CGRect.init(x: 20, y: 0, width: tableView.frame.size.width - 40, height: 40))
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 40))
+        let labelText = UILabel.init(frame: CGRect(x: 20, y: 0, width: tableView.frame.size.width - 40, height: 40))
         
         if section == 2 {
             labelText.text = "Both can be selected!"
             
-            labelText.textAlignment = .center
+            labelText.textAlignment = .left
             
             labelText.font = UIFont.init(name: "HelveticaNeue-Light", size: 16)
             
         }else if section == 1 {
             labelText.textAlignment = .left
-            labelText.text = "    GENDER"
-            labelText.font = UIFont.init(name: "HelveticaNeue-Light", size: 18)
+            labelText.text = "GENDER"
+            labelText.font = UIFont.init(name: "HelveticaNeue-Light", size: 16)
         }
         
         if section == 0 {
             labelText.text = ""
         }
-        
-        return labelText
+        headerView.addSubview(labelText)
+        return headerView
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -518,14 +528,14 @@ class CollabWithVC: UIViewController , UITableViewDelegate , UITableViewDataSour
             sender.isSelected = false
         }
         else{
-            if arrayCatagoryServer.count  < 2 {
+         //   if arrayCatagoryServer.count  < 2 {
                 arrayCatagoryServer.add(arrayCatagory[indexPath.row])
                 sender.setImage(UIImage.init(named: "radio_sel"), for: .normal)
                 sender.isSelected = true
-            }
-            else{
-                AppManager.showMessageView(view: self.view, meassage: "You can only choose a maximum of 2 :)")
-            }
+//                }
+//                else{
+//                    AppManager.showMessageView(view: self.view, meassage: "You can only choose a maximum of 2 ")
+//                }
             
         }
         
